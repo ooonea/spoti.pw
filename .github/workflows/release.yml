@@ -1,11 +1,11 @@
-# Every push to main updates one release PR (version.txt and CHANGELOG.md from the feat:/fix:
-# commits since the last release). Merging it tags vX.Y.Z and makes the GitHub Release, and the
-# second job builds the tweak's .deb and attaches it. No IPA is built or published here.
+# Manual release workflow for this fork. It stays available when needed, but fork syncs/pushes to
+# main do not trigger it automatically. Running it updates one release PR (version.txt and CHANGELOG.md
+# from the feat:/fix: commits since the last release). Merging it tags vX.Y.Z and makes the GitHub
+# Release, and the second job builds the tweak's .deb and attaches it. No IPA is built or published here.
 name: Release
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: write
