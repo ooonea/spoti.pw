@@ -30,10 +30,10 @@ jobs:
           brew install make dpkg ldid
           python3 -m pip install --break-system-packages git+https://github.com/asdfzxcvbn/pyzule-rw.git
 
-      - name: Download Spotify 9.1.82 decrypted IPA
+      - name: Download Spotify 9.1.86 decrypted IPA
         run: |
           mkdir -p ipa
-          curl -fsSL "https://filebin.net/x1mwc9hh3hiuurgp/com.spotify.client-9.1.82-Decrypted.ipa" -o ipa/spotify.ipa
+          curl -fsSL "https://filebin.net/ipw65m7a2ke8iriw/com.spotify.client-9.1.86-Decrypted.ipa" -o ipa/spotify.ipa
           case "$(file --mime-type -b ipa/spotify.ipa)" in application/zip|application/x-ios-app) ;; *) echo "::error::Not an IPA"; exit 1 ;; esac
 
       - name: Build spoti.pw IPA
@@ -41,6 +41,6 @@ jobs:
 
       - uses: actions/upload-artifact@v5
         with:
-          name: spoti.pw-main-spotify-9.1.82
+          name: spoti.pw-main-spotify-9.1.86
           path: out/*.ipa
           if-no-files-found: error
