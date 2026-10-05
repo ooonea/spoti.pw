@@ -167,6 +167,12 @@ The link is masked in the log and the result stays in your fork. A fork made bef
 
 Each [release](https://github.com/skopevoj/spoti.pw/releases) also carries the tweak's `.deb`.
 
+> [!NOTE]
+> Starting with v0.50.0, release tags in this public repository identify the published distribution
+> artifacts. Current Chroma development happens in a private repository, so the commit a v0.50+
+> tag points to is not a source snapshot of that release. Git comparisons can therefore show a
+> v0.50+ tag as older than the public 0.23.0 beta even though the release kit itself is newer.
+
 ### Signing
 
 Sign with a bundle id matching your certificate's App ID. If it doesn't match, the app still works
