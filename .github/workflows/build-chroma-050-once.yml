@@ -1,0 +1,53 @@
+name: Build Chroma 0.50.0 once
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-chroma-050-once.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - name: Recover Spotify 9.1.78 IPA URL
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          old=$(gh api "repos/$GITHUB_REPOSITORY/contents/.github/workflows/build-spoti-0230beta-9178-once.yml?ref=a058cc7b11af3f76d2e9ed6b8ca6a77f8ea8c290" --jq .content | base64 -d)
+          IPA_URL=$(printf '%s\n' "$old" | grep -o 'https://filebin.net/[^"]*' | head -1)
+          [ -n "$IPA_URL" ] || { echo "::error::Could not recover the previous Spotify 9.1.78 IPA URL"; exit 1; }
+          echo "::add-mask::$IPA_URL"
+          echo "IPA_URL=$IPA_URL" >> "$GITHUB_ENV"
+
+      - name: Download Spotify 9.1.78 IPA
+        run: |
+          curl -fsSL --retry 3 -o spotify.ipa "$IPA_URL"
+          case "$(file --mime-type -b spotify.ipa)" in
+            application/zip|application/x-ios-app) ;;
+            *) echo "::error::Downloaded file is not an IPA"; exit 1 ;;
+          esac
+
+      - name: Download Chroma 0.50.0 kit and patcher
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v0.50.0 -R skopevoj/spoti.pw -p '*-kit.zip' -O kit.zip
+          curl -fsSL --retry 3 -o patcher.mjs https://chroma.pw/patcher.mjs
+
+      - name: Patch IPA
+        run: node patcher.mjs spotify.ipa kit.zip out
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: chroma-0.50.0-spotify-9.1.78
+          path: out/*.ipa
+          archive: false
+          if-no-files-found: error
